@@ -24,7 +24,7 @@ app.UseCors(policyBuilder =>
         throw new InvalidOperationException("Cors section is missing in appsettings.json");
 
     policyBuilder
-        .WithOrigins(corsConfig.AllowedOrigins)
+        .WithOrigins(corsConfig.AllowedOrigins.Any() ? corsConfig.AllowedOrigins : new[] { "*" })
         .WithMethods("POST")
         .WithHeaders("Content-Type");
 });
@@ -61,7 +61,7 @@ static void AddAppsettingsSourceTo(IList<IConfigurationSource> sources)
     {
         FileProvider = new PhysicalFileProvider(basePath),
         Path = "appsettings.json",
-        Optional = false,
+        Optional = true,
         ReloadOnChange = true
     };
     sources.Add(jsonSource);
