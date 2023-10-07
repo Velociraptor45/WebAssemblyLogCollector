@@ -41,7 +41,7 @@ Example:
       {
         "Name": "File",
         "Args": {
-          "path": ".\\logs\\logs.log",
+          "path": "\\app\\logs\\logs.log",
           "rollOnFileSizeLimit": true,
           "fileSizeLimitBytes": 1048576,
           "retainedFileCountLimit": 20
