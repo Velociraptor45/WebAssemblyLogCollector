@@ -1,6 +1,8 @@
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.FileProviders;
 using Serilog;
+using Serilog.Core;
+using Serilog.Events;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,7 +29,25 @@ app.UseCors(policyBuilder =>
         .WithHeaders("Content-Type");
 });
 
-app.UseSerilogIngestion();
+var ingestionConfig = app.Configuration.GetSection("Ingestion").Get<IngestionConfig>();
+
+app.UseSerilogIngestion(opt =>
+{
+    if (ingestionConfig is null)
+        return;
+
+    if (ingestionConfig.EndpointPath is not null)
+        opt.EndpointPath = ingestionConfig.EndpointPath;
+
+    if (ingestionConfig.OriginPropertyName is not null)
+        opt.OriginPropertyName = ingestionConfig.OriginPropertyName;
+
+    if (ingestionConfig.EventBodyLimitBytes is not null)
+        opt.EventBodyLimitBytes = ingestionConfig.EventBodyLimitBytes.Value;
+
+    if (ingestionConfig.MinLogLevel is not null)
+        opt.ClientLevelSwitch = new LoggingLevelSwitch(ingestionConfig.MinLogLevel.Value);
+});
 
 await app.RunAsync();
 
@@ -50,4 +70,12 @@ static void AddAppsettingsSourceTo(IList<IConfigurationSource> sources)
 internal class CorsConfig
 {
     public string[] AllowedOrigins { get; init; } = Array.Empty<string>();
+}
+
+internal class IngestionConfig
+{
+    public string? EndpointPath { get; init; }
+    public string? OriginPropertyName { get; init; }
+    public long? EventBodyLimitBytes { get; init; }
+    public LogEventLevel? MinLogLevel { get; init; }
 }
