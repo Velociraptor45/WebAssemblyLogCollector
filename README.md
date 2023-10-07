@@ -1,0 +1,1 @@
+# WebAssemblyLogCollector
