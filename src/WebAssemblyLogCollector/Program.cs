@@ -13,33 +13,17 @@ Log.Logger = new LoggerConfiguration()
     .CreateLogger();
 
 builder.Services.AddCors();
-builder.Services.AddSwaggerGen(options =>
-{
-    options.CustomSchemaIds(type => type.ToString());
-});
-
-builder.Services.AddControllers();
 
 var app = builder.Build();
-
-app.UseSwagger();
-app.UseSwaggerUI(c =>
-{
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
-});
 
 app.UseCors(policyBuilder =>
 {
     var corsConfig = app.Configuration.GetSection("Cors").Get<CorsConfig>();
 
-    Console.WriteLine($"CorsConfig {(corsConfig == null ? "not " : "")}found");
-
     if (corsConfig is null)
         throw new InvalidOperationException("Cors section is missing in appsettings.json");
 
     var allowedOrigins = corsConfig.AllowedOrigins.Any() ? corsConfig.AllowedOrigins : new[] { "*" };
-
-    Console.WriteLine($"Allowed Origins: {string.Join(", ", allowedOrigins)}");
 
     policyBuilder
         .WithOrigins(allowedOrigins)
@@ -66,11 +50,6 @@ app.UseSerilogIngestion(opt =>
     if (ingestionConfig.MinLogLevel is not null)
         opt.ClientLevelSwitch = new LoggingLevelSwitch(ingestionConfig.MinLogLevel.Value);
 });
-
-app.UseRouting();
-app.UseHttpsRedirection();
-
-app.MapControllers();
 
 await app.RunAsync();
 
