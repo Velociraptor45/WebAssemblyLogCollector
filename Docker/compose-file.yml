@@ -1,0 +1,13 @@
+version: "3.7"
+
+services:
+  Collector:
+    image: velocir4ptor/WebAssemblyLogCollector:1.0.0
+    ports:
+      - "8080:80"
+    volumes:
+      - log-collector-config:/app/config:ro
+
+volumes:
+  log-collector-config:
+    external: true
