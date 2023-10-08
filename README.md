@@ -1,5 +1,7 @@
 # WebAssemblyLogCollector
 
+[![Docker Image Version (latest semver)](https://img.shields.io/docker/v/velocir4ptor/web-assembly-log-collector?label=Docker%20Image)](https://hub.docker.com/repository/docker/velocir4ptor/web-assembly-log-collector)
+
 The WebAssemblyLogCollector wraps the `Serilog.AspNetCore.Ingestion` package in order to provide a standalone application that collects logs for e.g. Blazor WebAssembly applications.
 For further information on how to send logs to the log collector, see [Serilog.Sinks.BrowserHttp](https://github.com/nblumhardt/serilog-sinks-browserhttp).
 
